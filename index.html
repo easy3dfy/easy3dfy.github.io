@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f8fafc">
+  <meta name="description" content="Easy-3Dfy composes complete object-local meshes into a single-image 3D scene through geometry-only correspondence prediction and explicit similarity-transform recovery.">
+  <title>Easy-3Dfy: Object-Level Geometric Composition for Single-Image 3D Scene Construction</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="Easy-3Dfy home">
+        <span>Easy-3Dfy</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#principle">Principle</a>
+        <a href="#method">Method</a>
+        <a href="#training">Training</a>
+        <a href="#results">Results</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero container" id="top" aria-labelledby="hero-title">
+      <h1 id="hero-title"><span class="title-name">Easy-3Dfy</span> <span class="title-rest">Object-Level Geometric Composition for Single-Image 3D Scene Construction</span></h1>
+      <div class="hero-actions" aria-label="Project resources">
+        <button class="button" type="button" disabled title="arXiv link not yet supplied" style="background: #b52b31; border-color: #b52b31; color: #fff;"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m5 3 7 8 7-8h-4l-3 4-3-4H5Zm0 18h4l3-4 3 4h4l-7-8-7 8Z"/><path d="m7 4 10 16M17 4 7 20" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>arxiv</button>
+        <button class="button" type="button" disabled title="Hugging Face link not yet supplied" style="background: #ffda63; border-color: #e8bf3c; color: #342b10;"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="11" r="8" fill="#ffcc4d" stroke="#8f6420" stroke-width=".8"/><circle cx="9" cy="9" r="1" fill="#342b10"/><circle cx="15" cy="9" r="1" fill="#342b10"/><path d="M8 12q4 6 8 0" fill="#fff" stroke="#342b10" stroke-width="1"/><path d="m3 13 3 2 3 4-2 2-4-4-1-3Zm18 0-3 2-3 4 2 2 4-4 1-3Z" fill="#ffcc4d" stroke="#8f6420" stroke-width=".8"/></svg>huggingface</button>
+        <button class="button button-disabled" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.77-.24.77-.54v-2.09c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.68.08-.68 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.29-5.13-1.25-5.13-5.57 0-1.23.44-2.23 1.16-3.02-.12-.29-.5-1.43.11-2.98 0 0 .95-.3 3.08 1.15a10.7 10.7 0 0 1 5.6 0c2.14-1.45 3.08-1.15 3.08-1.15.61 1.55.23 2.69.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.33-2.64 5.28-5.15 5.56.4.35.76 1.03.76 2.08v3.09c0 .3.21.65.78.54A11.2 11.2 0 0 0 12 .8Z"/></svg>Code (coming soon)</button>
+      </div>
+      <figure class="figure-card teaser-card" data-title="Single-image scene construction">
+        <div class="figure-viewport">
+          <img class="figure-image" src="assets/teaser.png" alt="Official qualitative comparison of multi-object scenes reconstructed from a single image and object masks." loading="eager">
+        </div>
+        <figcaption class="figure-footer">
+          <div class="caption-copy">Qualitative comparisons across multi-object examples, showing object layout and scene assembly.</div>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="section principle-section" id="principle" aria-labelledby="principle-title">
+      <div class="container">
+        <div class="section-heading">
+          <h2 id="principle-title">Principle</h2>
+          <p class="section-intro">A complete mesh lives in an object-local coordinate system. A scene pointmap captures visible surfaces in a shared scene frame. Easy-3Dfy connects them through object-level point cloud registration with a <strong style="color: #000; font-weight: 750;">Rectified Point Flow-Matching (RPF)</strong> aligner.</p>
+        </div>
+        <div class="interface-grid">
+          <article class="interface-card"><div class="interface-symbol" aria-hidden="true">X<sub>i</sub></div><h3>Object-local meshes</h3><p>Complete assets supplied by a replaceable image-to-3D provider, independent of its pose or layout predictions.</p></article>
+          <article class="interface-card"><div class="interface-symbol" aria-hidden="true">P</div><h3>A scene pointmap</h3><p>Pixel-aligned scene geometry provides the common reference frame and an object-specific partial observation.</p></article>
+          <article class="interface-card"><div class="interface-symbol" aria-hidden="true">T<sub>i</sub></div><h3>Local-to-pointmap-scene transforms</h3><p>An explicit uniform-scale similarity transform maps each complete mesh into the shared pointmap scene frame.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="method" aria-labelledby="method-title">
+      <div class="section-heading"><h2 id="method-title">Method</h2></div>
+      <figure class="figure-card" data-title="Easy-3Dfy framework" style="margin-bottom: 20px;">
+        <div class="figure-viewport framework-viewport"><img class="figure-image" src="assets/framework.png" alt="Easy-3Dfy framework: object completion and mesh generation, scene pointmap queries, RPF correspondence prediction, and similarity-transform scene assembly." loading="lazy"></div>
+        <figcaption class="figure-footer"><div class="caption-copy">Replaceable asset and scene-geometry providers are linked by an RPF-based geometric aligner.</div></figcaption>
+      </figure>
+      <div class="pipeline-grid">
+        <article class="stage-card"><div class="stage-top"><span class="stage-number">01</span><span class="stage-kind">Extract</span></div><h3>Identify the visible object</h3><p>Accept masks from an upstream automatic or user-prompted segmentation model. Each mask defines the visible object region and crop; mask estimation is outside this work.</p><div class="stage-output">Image + object masks</div></article>
+        <article class="stage-card"><div class="stage-top"><span class="stage-number">02</span><span class="stage-kind">Complete &amp; generate</span></div><h3>Build an object-local asset</h3><p>Occlusion-aware image editing completes the object using crop, mask, and scene context. A plug-and-play image-to-3D provider converts the completed image into a complete object-local mesh.</p><div class="stage-output">Completed image → local mesh</div></article>
+        <article class="stage-card"><div class="stage-top"><span class="stage-number">03</span><span class="stage-kind">Observe geometry</span></div><h3>Construct query and anchor</h3><p>A scene pointmap and normals provide a masked, filtered partial query for each object. Sample anchor points and normals from the corresponding complete local mesh.</p><div class="stage-output">Partial query + mesh anchor</div></article>
+        <article class="stage-card"><div class="stage-top"><span class="stage-number">04</span><span class="stage-kind">Align &amp; assemble</span></div><h3>Recover the scene transform</h3><p>RPF uses XYZ + normal features to predict each query point’s correspondence position in the anchor frame. Unweighted Umeyama/SVD fitting recovers a uniform-scale Sim(3) transform, applied to the complete mesh.</p><div class="stage-output">Correspondences → Sim(3) → scene</div></article>
+      </div>
+    </section>
+
+    <section class="section training-section" id="training" aria-labelledby="training-title">
+      <div class="container">
+        <div class="section-heading"><h2 id="training-title">RPF training</h2><p class="section-intro">The RPF aligner learns correspondence positions from individual object meshes and rendered partial observations, without complete scene layouts or explicit inter-object relationship supervision.</p></div>
+        <figure class="figure-card" data-title="Object-level RPF training">
+          <div class="figure-viewport training-viewport"><img class="figure-image" src="assets/rpf_train.png" alt="Official RPF training pipeline with single-object meshes, aligned RGB-depth renders, monocular partial queries, pixel-matched ground-truth correspondences, and geometric augmentation." loading="lazy"></div>
+          <figcaption class="figure-footer"><div class="caption-copy">Object-level geometry supplies the partial query, complete anchor, and ground-truth correspondence positions.</div></figcaption>
+        </figure>
+        <div class="training-details">
+          <article><span class="detail-line" aria-hidden="true"></span><h3>Render &amp; observe</h3><p>Sample mesh anchors and normals. Render pixel-aligned RGB and depth from sampled viewpoints; MogeV2 estimates the partial query and normals from the rendered RGB.</p></article>
+          <article><span class="detail-line" aria-hidden="true"></span><h3>Match through depth</h3><p>Random occlusions remove query observations. At each retained pixel, rendered depth supplies the matching ground-truth position on the complete object surface.</p></article>
+          <article><span class="detail-line" aria-hidden="true"></span><h3>Augment independently</h3><p>Apply independent rotations, scales, and translations to query and anchor-side groups, with correspondence targets kept in the anchor group. Axis-wise scaling perturbs object shape.</p></article>
+        </div>
+        <p class="training-footnote">Conditioned on anchor and query geometry, RPF learns a rectified-flow velocity field that transports noise to query-to-anchor correspondence positions.</p>
+      </div>
+    </section>
+
+    <section class="section container" id="results" aria-labelledby="results-title">
+      <div class="section-heading"><h2 id="results-title">Qualitative results</h2></div>
+      <div class="results-tabs" role="tablist" aria-label="Qualitative result categories">
+        <button id="tab-layout" class="result-tab" type="button" role="tab" aria-selected="true" aria-controls="panel-layout" tabindex="0"><span class="tab-index" aria-hidden="true">01</span>Layout comparison</button>
+        <button id="tab-mesh" class="result-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-mesh" tabindex="-1"><span class="tab-index" aria-hidden="true">02</span>Mesh provider</button>
+        <button id="tab-more" class="result-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-more" tabindex="-1"><span class="tab-index" aria-hidden="true">03</span>More scenes</button>
+      </div>
+      <div class="result-panel" id="panel-layout" role="tabpanel" aria-labelledby="tab-layout" tabindex="0">
+        <div class="panel-intro"><div><p>The main comparison shares identical SAM-3Dfy meshes between SAM-3Dfy and Easy-3Dfy, isolating layout prediction. Easy-3Dfy registers each asset to its pointmap-derived partial query.</p></div></div>
+        <figure class="figure-card" data-title="Layout comparison">
+          <div class="figure-viewport results-viewport"><img class="figure-image" src="assets/layout_vis.png" alt="Official matched multi-view layout comparisons of MIDI, SceneGen, SAM-3Dfy, and Easy-3Dfy." loading="lazy"></div>
+          <figcaption class="figure-footer"><div class="caption-copy">Matched inputs and views reveal differences in scale, orientation, ordering, spacing, and object contact.</div></figcaption>
+        </figure>
+      </div>
+      <div class="result-panel" id="panel-mesh" role="tabpanel" aria-labelledby="tab-mesh" tabindex="0">
+        <div class="panel-intro"><div><p>Full-scene views and close-ups separate geometric compatibility from visual detail. Dimensions and proportions that match the partial observation help alignment; richer texture alone does not guarantee a better layout.</p></div></div>
+        <figure class="figure-card" data-title="Mesh-provider comparison">
+          <div class="figure-viewport results-viewport"><img class="figure-image" src="assets/mesh_vis.png" alt="Official mesh-provider visualization with matched inputs, full-scene panoramas, and asset close-ups comparing visual and layout quality." loading="lazy"></div>
+          <figcaption class="figure-footer"><div class="caption-copy">Full scenes show extent and placement; close-ups expose texture and fine surface detail.</div></figcaption>
+        </figure>
+      </div>
+      <div class="result-panel" id="panel-more" role="tabpanel" aria-labelledby="tab-more" tabindex="0">
+        <div class="panel-intro"><div><p>Additional visualizations on 3D-FUTURE from the appendix extend the qualitative comparison beyond the main examples.</p></div></div>
+        <figure class="figure-card" data-title="Additional 3D-FUTURE scenes">
+          <div class="figure-viewport results-viewport"><img class="figure-image" src="assets/more_vis.png" alt="Official appendix figure showing additional 3D-FUTURE scene-construction visualizations." loading="lazy"></div>
+          <figcaption class="figure-footer"><div class="caption-copy">Additional 3D-FUTURE scene-construction visualizations from the appendix.</div></figcaption>
+        </figure>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer container"><a class="brand footer-brand" href="#top">Easy-3Dfy</a><a class="figure-link" href="#top">Back to top <span aria-hidden="true">↑</span></a></footer>
+</body>
+</html>
