@@ -48,9 +48,11 @@ h1 { max-width: 980px; margin-inline: auto; letter-spacing: -1.8px; font-weight:
 .title-name { display: block; color: var(--blue); font-size: clamp(46px, 4.8vw, 60px); line-height: 1.08; letter-spacing: -2.8px; margin-bottom: 12px; }
 .title-rest { display: block; font-size: clamp(25px, 3.15vw, 39px); line-height: 1.22; text-wrap: balance; }
 .hero-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 20px 0 24px; }
-.button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 45px; padding: 11px 17px; border: 1px solid var(--line); border-radius: 9px; font-size: 12px; line-height: 1.4; font-weight: 650; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 45px; padding: 11px 17px; border: 1px solid var(--line); border-radius: 9px; font-size: 12px; line-height: 1.4; font-weight: 650; text-decoration: none; cursor: pointer; }
+a.button { color: inherit; transition: filter .18s, transform .18s, box-shadow .18s; }
+a.button:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 4px 12px rgba(0, 0, 0, .12); }
 .button svg { width: 17px; height: 17px; }
-.button-disabled { background: #f0f3f7; color: #637488; }
+.button-disabled { background: #f0f3f7; color: #637488; cursor: not-allowed; }
 .button-primary { background: var(--blue); color: white; border-color: var(--blue); transition: background .18s, transform .18s; }
 .button-primary:hover { background: #1949a5; transform: translateY(-1px); }
 .button-primary span { margin-left: 6px; }
